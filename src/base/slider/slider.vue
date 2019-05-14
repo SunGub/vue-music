@@ -8,7 +8,18 @@
 </template>
 
 <script type="text/ecmascript-6">
-export default {}
+export default {
+  methods: {
+    _setSliderWidth() {},
+    _initSlider() {}
+  },
+  mounted() {
+    setTimeout(function () {
+      this._setSliderWidth()
+      this._initSlider()
+    }, 20)
+  }
+}
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
