@@ -25,7 +25,7 @@ export default {
     },
     interval: {
       type: Number,
-      default: 1000
+      default: 4000
     }
   },
   data() {
@@ -42,14 +42,24 @@ export default {
       if (this.autoPlay) {
         this._play()
       }
-      window.addEventListener('resize', () => {
-        if (!this.slider) {
-          return
+    }, 20)
+    window.addEventListener('resize', () => {
+      if (!this.slider || !this.slider.enabled) {
+        return
+      }
+      clearTimeout(this.resizeTimer)
+      this.resizeTimer = setTimeout(() => {
+        if (this.slider.isInTransition) {
+          this._onScrollEnd()
+        } else {
+          if (this.autoPlay) {
+            this._play()
+          }
         }
         this._setSliderWidth(true)
         this.slider.refresh()
-      })
-    }, 20)
+      }, 60)
+    })
   },
   methods: {
     _setSliderWidth(isResize) {
@@ -83,13 +93,21 @@ export default {
           speed: 400
         }
       })
-      this.slider.on('scrollEnd', () => {
-        let pageIndex = this.slider.getCurrentPage().pageX
-        this.currentPageIndex = pageIndex
+      this.slider.on('scrollEnd', this._onScrollEnd)
+
+      this.slider.on('beforeScrollStart', () => {
         if (this.autoPlay) {
-          this._play()
+          clearTimeout(this.timer)
         }
       })
+    },
+    _onScrollEnd() {
+      let pageIndex = this.slider.getCurrentPage().pageX
+      console.log(pageIndex)
+      this.currentPageIndex = pageIndex
+      if (this.autoPlay) {
+        this._play()
+      }
     },
     _play() {
       clearTimeout(this.timer)
