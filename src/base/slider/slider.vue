@@ -103,7 +103,6 @@ export default {
     },
     _onScrollEnd() {
       let pageIndex = this.slider.getCurrentPage().pageX
-      console.log(pageIndex)
       this.currentPageIndex = pageIndex
       if (this.autoPlay) {
         this._play()
@@ -116,6 +115,9 @@ export default {
         this.slider.next()
       }, this.interval)
     }
+  },
+  destroyed() {
+    clearTimeout(this.timer)
   }
 }
 </script>
