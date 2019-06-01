@@ -29,7 +29,6 @@ export default {
   },
   watch: {
     data() {
-      debugger
       setTimeout(() => {
         this.refresh()
       }, 20)
