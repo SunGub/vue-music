@@ -9,7 +9,7 @@
 export default {
   props: {
     title: {
-      type: Number,
+      type: String,
       default: '正在载入...'
     }
   }
