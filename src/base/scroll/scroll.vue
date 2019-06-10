@@ -20,6 +20,11 @@ export default {
       type: Array,
       // 数组默认为空可用null
       default: null
+    },
+    // 是否需要监听滚动事件
+    listenScroll: {
+      type: Boolean,
+      default: false
     }
   },
   mounted() {
@@ -43,6 +48,13 @@ export default {
         probeType: this.probeType,
         click: this.click
       })
+      if (this.listenScroll) {
+        const me = this
+        this.scroll.on('scroll', (pos) => {
+          // scroll组件向父级派发一个滚动事件
+          me.$emit('scroll', pos)
+        })
+      }
     },
     enable() {
       this.scroll && this.scroll.enable()
@@ -52,6 +64,12 @@ export default {
     },
     refresh() {
       this.scroll && this.scroll.refresh()
+    },
+    scrollTo() {
+      this.scroll && this.scroll.scrollTo.apply(this.scroll, arguments)
+    },
+    scrollToElement() {
+      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
     }
   }
 }
