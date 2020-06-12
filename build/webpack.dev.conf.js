@@ -33,7 +33,8 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           },
           params: req.query
         }).then((response) => {
-          res.json(response.data)
+          // 将qq服务端返回的数据透传给浏览器端
+          res.json(response)
         }).catch((e) => {
           console.log(e)
         })

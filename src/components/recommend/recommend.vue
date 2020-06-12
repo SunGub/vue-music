@@ -28,7 +28,9 @@
           </ul>
         </div>
       </div>
-      <loading></loading>
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
