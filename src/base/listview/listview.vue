@@ -27,14 +27,22 @@
         </li>
       </ul>
     </div>
+    <div class="list-fixed" v-show="fixedTitle" ref="fixed">
+      <h1 class="fixed-title">{{fixedTitle}}</h1>
+    </div>
+    <div class="loading-container" v-show="!data.length">
+      <loading></loading>
+    </div>
   </scroll>
 </template>
 
 <script type="text/ecmascript-6">
 import Scroll from 'base/scroll/scroll'
 import {getData} from 'common/js/dom'
+import Loading from 'base/loading/loading'
 
 const ANCHOR_HEIGHT = 18
+const TITLE_HEIGHT = 30
 
 export default {
   created() {
@@ -44,6 +52,7 @@ export default {
   data() {
     return {
       scrollY: -1,
+      diff: -1,
       currentIndex: 0,
       listenScroll: true,
       probeType: 3
@@ -62,6 +71,12 @@ export default {
       return this.data.map((group) => {
         return group.title.substr(0, 1)
       })
+    },
+    fixedTitle() {
+      if (this.scrollY > 0) {
+        return ''
+      }
+      return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
     }
   },
   methods: {
@@ -109,20 +124,32 @@ export default {
         this.currentIndex = 0
         return
       }
-      // 在中间部分或底部滚动
+      // 在中间部分滚动
       let listHeight = this.listHeight
       for (let i = 0; i < this.listHeight.length; i++) {
         let height1 = listHeight[i]
         let height2 = listHeight[i + 1]
-        if (!height2 || (-newY >= height1 && -newY < height2)) {
+        if (-newY >= height1 && -newY < height2) {
           this.currentIndex = i
+          this.diff = height2 + newY
           return
         }
       }
+      // 当滚动到底部，且-newY大于最后一个元素的上限
+      this.currentIndex = listHeight.length - 2
+    },
+    diff(newVal) {
+      let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+      if (this.fixedTop === fixedTop) {
+        return
+      }
+      this.fixedTop = fixedTop
+      this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
     }
   },
   components: {
-    Scroll
+    Scroll,
+    Loading
   }
 }
 </script>
