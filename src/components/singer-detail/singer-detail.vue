@@ -5,16 +5,49 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex'
+import { getSingerDetail } from 'api/singer'
+import { ERR_OK } from 'api/config'
+import { createSong } from 'common/js/song'
+import { mapGetters } from 'vuex'
 
 export default {
-  created() {
-    console.log(this.singer)
+  data() {
+    return {
+      songs: []
+    }
   },
   computed: {
     ...mapGetters([
       'singer'
     ])
+  },
+  created() {
+    this._getDetail()
+  },
+  methods: {
+    _getDetail() {
+      // 用户刷新当前页时，做的边界处理情况，因为歌手数据是在点击歌手的时候存入的，所以刷新当前页拿不到歌手数据
+      if (!this.singer.id) {
+        this.$router.push('/singer')
+        return
+      }
+      getSingerDetail(this.singer.id).then((res) => {
+        if (res.code === ERR_OK) {
+          this.songs = this._nomalizeSongs(res.data.list)
+          console.log(this.songs)
+        }
+      })
+    },
+    _nomalizeSongs(list) {
+      let ret = []
+      list.forEach((item) => {
+        let {musicData} = item
+        if (musicData.songid && musicData.albummid) {
+          ret.push(createSong(musicData))
+        }
+      })
+      return ret
+    }
   }
 }
 </script>
