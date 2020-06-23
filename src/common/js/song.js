@@ -31,7 +31,7 @@ function filterSinger(singer) {
     return ''
   }
   singer.forEach((s) => {
-    ret.push(singer.name)
+    ret.push(s.name)
   })
   return ret.join('/')
 }
